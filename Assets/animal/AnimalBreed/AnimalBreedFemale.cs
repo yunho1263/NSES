@@ -6,7 +6,7 @@ public class AnimalBreedFemale : AnimalBreed
 {
     public GameObject prefeb;
 
-    public Animal partner;
+    public AnimalBehaviour partner;
     public AnimalStat partnerStat;
     public AnimalBreedMale partnerAnimalBreed;
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CarnivoreBehaviour : BehaviourTreeRunner
+public class CarnivoreBehaviour : AnimalBehaviour
 {
     public override void SetupTree()
     {

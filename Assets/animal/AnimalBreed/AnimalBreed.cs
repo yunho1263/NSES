@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AnimalBreed : MonoBehaviour
 {
-    public Animal thisAnimal;
+    public AnimalBehaviour behaviour;
     public AnimalStat animalStat;
 
     public bool canBreed;
@@ -17,7 +17,7 @@ public class AnimalBreed : MonoBehaviour
     {
         canBreed = false;
         breedIsReady = false;
-        thisAnimal.state = State.Breed;
+        behaviour.state = State.Breed;
 
         StartCoroutine(Breeding());
     }
@@ -26,7 +26,7 @@ public class AnimalBreed : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         breedCount++;
-        thisAnimal.state = State.Idle;
+        behaviour.state = State.Idle;
 
         StartCoroutine(BreedCoolTime());
     }

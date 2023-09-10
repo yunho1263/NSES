@@ -1,15 +1,40 @@
-using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
-public abstract class BehaviourTreeRunner : MonoBehaviour
+public enum AnimalType
+{
+    Herbivore,
+    Carnivore,
+    Omnivore
+}
+
+public enum State
+{
+    Idle,
+    Navigate,
+    Eat,
+    Drink,
+    Sleep,
+    Breed,
+    Seek,
+    Avoid,
+}
+
+public abstract class AnimalBehaviour : MonoBehaviour
 {
     public BehaviourTree tree;
 
-    public Animal animal;
+    public State state;
     public AnimalStat animalStat;
     public AnimalBreed animalBreed;
+
+
+    public void Initialize()
+    {
+
+    }
 
     public abstract void SetupTree();
 
