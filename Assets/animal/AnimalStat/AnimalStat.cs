@@ -4,6 +4,13 @@ using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using UnityEngine;
 
+public enum AnimalType
+{
+    Herbivore,
+    Carnivore,
+    Omnivore
+}
+
 public enum Personality
 {
     Timid, // ¼Ò½ÉÇÔ
@@ -24,6 +31,7 @@ public enum Sex
 
 public class AnimalStat : MonoBehaviour
 {
+    public AnimalType animalType;
     public List<Personality> personalitys;
     public Sex sex;
 

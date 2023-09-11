@@ -3,13 +3,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
-public enum AnimalType
-{
-    Herbivore,
-    Carnivore,
-    Omnivore
-}
-
 public enum State
 {
     Idle,
@@ -29,6 +22,8 @@ public abstract class AnimalBehaviour : MonoBehaviour
     public State state;
     public AnimalStat animalStat;
     public AnimalBreed animalBreed;
+
+    public Transform target;
 
 
     public void Initialize()
@@ -50,5 +45,25 @@ public abstract class AnimalBehaviour : MonoBehaviour
     public bool HungerCondition()
     {
         return animalStat.hunger * 0.5f <= animalStat.maxHunger;
+    }
+
+    public bool StaminaCondition()
+    {
+        return animalStat.stamina * 0.5f <= animalStat.maxStamina;
+    }
+
+    public bool HealthCondition()
+    {
+        return animalStat.health * 0.5f <= animalStat.maxHealth;
+    }
+
+    public bool breedCondition()
+    {
+        if (HealthCondition() && StaminaCondition() && HungerCondition())
+        {
+            return true;
+        }
+
+        return false;
     }
 }

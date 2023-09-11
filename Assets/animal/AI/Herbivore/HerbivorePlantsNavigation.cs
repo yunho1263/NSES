@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class HerbivorePlantsNavigation : NavigationNode
 {
-    public Transform myTransform;
     public float searchRadius;
+
+    public HerbivorePlantsNavigation(Transform target, float searchRadius) : base(target)
+    {
+        this.searchRadius = searchRadius;
+    }
     public override bool Serch()
     {
         List<Transform> plants = new List<Transform>();

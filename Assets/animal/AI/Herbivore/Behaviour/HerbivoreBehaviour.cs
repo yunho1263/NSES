@@ -19,11 +19,12 @@ public class HerbivoreBehaviour : AnimalBehaviour
         NegativeSequencerNode behaviourSequencer = new NegativeSequencerNode();
 
         // 허기가 50%이하면 먹이를 찾는다
-        behaviourSequencer.children.Add(new ConditionNode(() => HungerCondition(), new HerbivorePlantsNavigation(), true));
+        behaviourSequencer.children.Add(new ConditionNode(() => HungerCondition(), new HerbivorePlantsNavigation(target, 8f), true));
 
+        // 여유가 있다면 짝짖기를 할 파트너를 찾는다
         if (animalStat.sex == Sex.Male)
         {
-
+            behaviourSequencer.children.Add(new ConditionNode(() => breedCondition(), new FindPartner(target, 8f, animalStat.animalType), true));
         }
 
 
