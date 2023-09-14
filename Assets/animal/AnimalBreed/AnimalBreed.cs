@@ -13,6 +13,11 @@ public class AnimalBreed : MonoBehaviour
     public float breedCount;
     public float breedcooldown;
 
+    public bool CanBreeding()
+    {
+        return canBreed && breedIsReady;
+    }
+
     public virtual void Breed()
     {
         canBreed = false;

@@ -2,29 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FindPartner : NavigationNode
+public class Flee : NavigationNode
 {
+    public AnimalStat stat;
+    public Transform thisTrans;
     public float searchRadius;
     public LayerMask layerMask;
 
-    public FindPartner(Transform target, float searchRadius, AnimalType animalType) : base(target)
+    public Flee(AnimalStat stat, Transform target, float searchRadius, AnimalType animalType, Transform thisTrans) : base(target)
     {
+        this.stat = stat;
         this.searchRadius = searchRadius;
+
+        layerMask = 0;
 
         switch (animalType)
         {
             case AnimalType.Herbivore:
-                layerMask = 1 << LayerMask.NameToLayer("Herbivore");
-                break;
-            case AnimalType.Carnivore:
-                layerMask = 1 << LayerMask.NameToLayer("Carnivore");
+                layerMask = 1 << LayerMask.NameToLayer("Omnivore") | 1 << LayerMask.NameToLayer("Carnivore");
                 break;
             case AnimalType.Omnivore:
-                layerMask = 1 << LayerMask.NameToLayer("Omnivore");
+                layerMask = 1 << LayerMask.NameToLayer("Carnivore");
                 break;
             default:
                 break;
         }
+
+        this.thisTrans = thisTrans;
     }
 
     public override bool Serch()
@@ -38,19 +42,24 @@ public class FindPartner : NavigationNode
             return false;
         }
 
-        //거리순으로 정렬
         for (int i = 0; i < colliders.Length; i++)
         {
             animals.Add(colliders[i].transform);
         }
 
-        animals.Sort(delegate (Transform a, Transform b)
-        {
-            return Vector2.Distance(a.position, position).CompareTo(Vector2.Distance(b.position, position));
-        });
+        // 모든 포식자들을 피할 수 있는 위치를 찾는다
+        Vector2 fleePosition = Vector2.zero;
 
-        target.position = animals[0].position;
-        position = target.position;
+        for (int i = 0; i < animals.Count; i++)
+        {
+            Vector2 dir = (Vector2)thisTrans.position - (Vector2)animals[i].position;
+            dir.Normalize();
+
+            fleePosition += (Vector2)thisTrans.position + dir * 2f;
+        }
+
+        fleePosition /= animals.Count;
+        target.position = fleePosition;
 
         return true;
     }

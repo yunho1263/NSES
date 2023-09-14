@@ -57,9 +57,9 @@ public abstract class AnimalBehaviour : MonoBehaviour
         return animalStat.health * 0.5f <= animalStat.maxHealth;
     }
 
-    public bool breedCondition()
+    public bool BreedCondition()
     {
-        if (HealthCondition() && StaminaCondition() && HungerCondition())
+        if (HealthCondition() && StaminaCondition() && HungerCondition() && animalBreed.CanBreeding())
         {
             return true;
         }

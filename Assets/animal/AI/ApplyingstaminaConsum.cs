@@ -31,7 +31,7 @@ public class ApplyingstaminaConsum : ActionNode
 
         if (stat.isMoving)
         {
-            float staminaConsumption = stat.staminaConsumption;
+            float staminaConsumption = stat.BasicStaminaConsumption;
             if (stat.isRunning)
             {
                 staminaConsumption *= 2;

@@ -17,10 +17,12 @@ public class AnimalBreedFemale : AnimalBreed
 
     public bool GetPartner(AnimalBreedMale partner)
     {
-        if (canBreed)
+        if (CanBreeding())
         {
             partnerAnimalBreed = partner;
             partnerStat = partnerAnimalBreed.animalStat;
+
+            Breed();
             return true;
         }
 

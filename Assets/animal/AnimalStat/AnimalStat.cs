@@ -51,7 +51,9 @@ public class AnimalStat : MonoBehaviour
     public float speed;
     public bool isMoving;
     public bool isRunning;
-    public float staminaConsumption;
+    public bool isResting;
+    public float BasicStaminaConsumption;
+    public float RunningStaminaConsumption;
 
     public float maxAge;
     public float age;
@@ -64,4 +66,34 @@ public class AnimalStat : MonoBehaviour
 
     public float xSize;
     public float ySize;
+
+    public void SetMoving(bool value)
+    {
+        isMoving = value;
+    }
+
+    public void SetRunning(bool value)
+    {
+        if (value)
+        {
+            if (stamina < BasicStaminaConsumption)
+            {
+                isRunning = false;
+                isResting = true;
+                return;
+            }
+
+            isRunning = true;
+            isResting = false;
+        }
+
+        else
+        {
+            if (stamina < BasicStaminaConsumption)
+            {
+                isResting = true;
+            }
+            isRunning = false;
+        }
+    }
 }

@@ -13,7 +13,27 @@ public class AnimalBreedMale : AnimalBreed
     {
         if (target.GetPartner(this))
         {
-            
+            Breed();
+        }
+        else
+        {
+            canBreed = true;
+        }
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(gameObject.tag))
+        {
+            canBreed = false;
+
+            AnimalBreedFemale target = collision.gameObject.GetComponent<AnimalBreedFemale>();
+
+            if (target != null)
+            {
+                Courting(target);
+            }
         }
     }
 }
