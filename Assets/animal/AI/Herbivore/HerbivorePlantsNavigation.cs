@@ -6,7 +6,7 @@ public class HerbivorePlantsNavigation : NavigationNode
 {
     public float searchRadius;
 
-    public HerbivorePlantsNavigation(Transform target, float searchRadius) : base(target)
+    public HerbivorePlantsNavigation(Transform target, float searchRadius, Transform p_thisTrans) : base(target, p_thisTrans)
     {
         this.searchRadius = searchRadius;
     }
@@ -15,7 +15,7 @@ public class HerbivorePlantsNavigation : NavigationNode
         List<Transform> plants = new List<Transform>();
         LayerMask layerMask = 1 << LayerMask.NameToLayer("Plants");
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, searchRadius, layerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
 
         if (colliders.Length == 0)
         {
@@ -30,7 +30,7 @@ public class HerbivorePlantsNavigation : NavigationNode
 
         plants.Sort(delegate (Transform a, Transform b)
         {
-            return Vector2.Distance(a.position, position).CompareTo(Vector2.Distance(b.position, position));
+            return Vector2.Distance(a.position, thisTrans.position).CompareTo(Vector2.Distance(b.position, thisTrans.position));
         });
 
         target.position = plants[0].position;
@@ -45,6 +45,7 @@ public class HerbivorePlantsNavigation : NavigationNode
 
     protected override void OnStop()
     {
+
     }
 
     protected override NodeState OnUpdate()

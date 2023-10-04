@@ -6,6 +6,5 @@ public class OmnivoreBehaviour : AnimalBehaviour
 {
     public override void SetupTree()
     {
-        
     }
 }

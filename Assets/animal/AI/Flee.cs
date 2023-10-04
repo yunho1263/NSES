@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Drawing;
 
 public class Flee : NavigationNode
 {
     public AnimalStat stat;
-    public Transform thisTrans;
+    
     public float searchRadius;
     public LayerMask layerMask;
 
-    public Flee(AnimalStat stat, Transform target, float searchRadius, AnimalType animalType, Transform thisTrans) : base(target)
+    public Flee(AnimalStat stat, Transform target, float searchRadius, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans)
     {
         this.stat = stat;
         this.searchRadius = searchRadius;
@@ -27,17 +28,16 @@ public class Flee : NavigationNode
             default:
                 break;
         }
-
-        this.thisTrans = thisTrans;
     }
 
     public override bool Serch()
     {
         List<Transform> animals = new List<Transform>();
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, searchRadius, layerMask);
+        Draw.CircleXY(thisTrans.position, searchRadius);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
 
-        if (colliders.Length == 0)
+        if (colliders == null || colliders.Length == 0)
         {
             return false;
         }
@@ -47,20 +47,31 @@ public class Flee : NavigationNode
             animals.Add(colliders[i].transform);
         }
 
-        // 모든 포식자들을 피할 수 있는 위치를 찾는다
-        Vector2 fleePosition = Vector2.zero;
-
-        for (int i = 0; i < animals.Count; i++)
+        if (animals.Count == 1)
         {
-            Vector2 dir = (Vector2)thisTrans.position - (Vector2)animals[i].position;
-            dir.Normalize();
-
-            fleePosition += (Vector2)thisTrans.position + dir * 2f;
+            // 반대방향으로 이동한다
+            Vector2 direction = (Vector2)thisTrans.position - (Vector2)animals[0].position;
+            target.position = (Vector2)thisTrans.position + direction;
         }
+        else
+        {
+            Vector2 fleePosition = Vector2.zero;
 
-        fleePosition /= animals.Count;
-        target.position = fleePosition;
+            // 포식자들의 가중치를 계산하여 포식자들이 적은 방향으로 이동한다
+            for (int i = 0; i < animals.Count; i++)
+            {
+                Vector2 direction = (Vector2)thisTrans.position - (Vector2)animals[i].position;
+                float distance = Vector2.Distance(thisTrans.position, animals[i].position);
 
+                // 포식자와의 거리가 멀수록 가중치가 작아진다
+                float weight = 1 / distance * 7;
+
+                // 포식자의 방향으로 가중치를 더한다
+                fleePosition += direction * weight;
+            }
+
+            target.position = fleePosition;
+        }
         return true;
     }
 

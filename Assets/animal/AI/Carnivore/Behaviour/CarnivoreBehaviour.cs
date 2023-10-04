@@ -6,6 +6,5 @@ public class CarnivoreBehaviour : AnimalBehaviour
 {
     public override void SetupTree()
     {
-
     }
 }

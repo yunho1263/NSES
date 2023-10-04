@@ -7,7 +7,7 @@ public class FindPartner : NavigationNode
     public float searchRadius;
     public LayerMask layerMask;
 
-    public FindPartner(Transform target, float searchRadius, AnimalType animalType) : base(target)
+    public FindPartner(Transform target, float searchRadius, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans)
     {
         this.searchRadius = searchRadius;
 
@@ -31,7 +31,7 @@ public class FindPartner : NavigationNode
     {
         List<Transform> animals = new List<Transform>();
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, searchRadius, layerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
 
         if (colliders.Length == 0)
         {
@@ -46,7 +46,7 @@ public class FindPartner : NavigationNode
 
         animals.Sort(delegate (Transform a, Transform b)
         {
-            return Vector2.Distance(a.position, position).CompareTo(Vector2.Distance(b.position, position));
+            return Vector2.Distance(a.position, thisTrans.position).CompareTo(Vector2.Distance(b.position, thisTrans.position));
         });
 
         target.position = animals[0].position;

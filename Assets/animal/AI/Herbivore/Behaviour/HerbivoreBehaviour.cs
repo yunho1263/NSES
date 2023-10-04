@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class HerbivoreBehaviour : AnimalBehaviour
@@ -22,12 +23,12 @@ public class HerbivoreBehaviour : AnimalBehaviour
         behaviourSequencer.children.Add(new Flee(animalStat, target, 8f, animalStat.animalType, transform));
 
         // 허기가 50%이하면 먹이를 찾는다
-        behaviourSequencer.children.Add(new ConditionNode(() => HungerCondition(), new HerbivorePlantsNavigation(target, 8f), true));
+        behaviourSequencer.children.Add(new ConditionNode(() => HungerCondition(), new HerbivorePlantsNavigation(target, 8f, transform), true));
 
         // 여유가 있다면 짝짖기를 할 파트너를 찾는다
         if (animalStat.sex == Sex.Male)
         {
-            behaviourSequencer.children.Add(new ConditionNode(() => BreedCondition(), new FindPartner(target, 8f, animalStat.animalType), true));
+            behaviourSequencer.children.Add(new ConditionNode(() => BreedCondition(), new FindPartner(target, 8f, animalStat.animalType, transform), true));
         }
 
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
@@ -15,6 +16,7 @@ public enum State
     Avoid,
 }
 
+[Serializable]
 public abstract class AnimalBehaviour : MonoBehaviour
 {
     public BehaviourTree tree;
@@ -25,6 +27,10 @@ public abstract class AnimalBehaviour : MonoBehaviour
 
     public Transform target;
 
+    private void Start()
+    {
+        SetupTree();
+    }
 
     public void Initialize()
     {
