@@ -7,9 +7,9 @@ public class FindPartner : NavigationNode
     public float searchRadius;
     public LayerMask layerMask;
 
-    public FindPartner(Transform target, float searchRadius, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans)
+    public FindPartner(AnimalBehaviour behaviour, AnimalStat stat, Transform target, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans, stat, behaviour)
     {
-        this.searchRadius = searchRadius;
+        searchRadius = stat.ViewRange;
 
         switch (animalType)
         {
@@ -27,7 +27,7 @@ public class FindPartner : NavigationNode
         }
     }
 
-    public override bool Serch()
+    public override SerchResult Search()
     {
         List<Transform> animals = new List<Transform>();
 
@@ -35,7 +35,7 @@ public class FindPartner : NavigationNode
 
         if (colliders.Length == 0)
         {
-            return false;
+            return SerchResult.None;
         }
 
         //거리순으로 정렬
@@ -52,7 +52,7 @@ public class FindPartner : NavigationNode
         target.position = animals[0].position;
         position = target.position;
 
-        return true;
+        return SerchResult.Walking;
     }
 
     protected override void OnStart()
@@ -61,17 +61,5 @@ public class FindPartner : NavigationNode
 
     protected override void OnStop()
     {
-    }
-
-    protected override NodeState OnUpdate()
-    {
-        if (Serch())
-        {
-            return NodeState.Success;
-        }
-        else
-        {
-            return NodeState.Failure;
-        }
     }
 }

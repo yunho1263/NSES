@@ -41,8 +41,11 @@ public class AnimalStat : MonoBehaviour
     public float maxStamina;
     public float stamina;
 
-    public float maxHunger;
-    public float hunger;
+    public float maxSatiety;
+    public float satiety;
+
+    public float MetabolicRate => 1f * (xSize * ySize);
+    public float MetMetabolicGein => 1f * (xSize * ySize);
 
     public float maxDamage;
     public float damage;
@@ -52,8 +55,8 @@ public class AnimalStat : MonoBehaviour
     public bool isMoving;
     public bool isRunning;
     public bool isResting;
-    public float BasicStaminaConsumption;
-    public float RunningStaminaConsumption;
+    public float BasicStaminaConsumption => speed * (xSize * ySize);
+    public float RunningStaminaConsumption => BasicStaminaConsumption * 2f;
 
     public float maxAge;
     public float age;
@@ -67,6 +70,110 @@ public class AnimalStat : MonoBehaviour
     public float xSize;
     public float ySize;
 
+    public float ViewRange;
+
+    public LayerMask NaturalEnemyLayerMask;
+
+
+    public void initialize()
+    {
+        health = maxHealth;
+        stamina = maxStamina;
+        satiety = maxSatiety * 0.5f;
+
+        NaturalEnemyLayerMask = 0;
+
+        switch (animalType)
+        {
+            case AnimalType.Herbivore:
+                NaturalEnemyLayerMask = 1 << LayerMask.NameToLayer("Omnivore") | 1 << LayerMask.NameToLayer("Carnivore");
+                break;
+            case AnimalType.Omnivore:
+                NaturalEnemyLayerMask = 1 << LayerMask.NameToLayer("Carnivore");
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void Metabolic()
+    {
+        // 포만감이 0 이하면 체력과 스테미나를 감소시킨다.
+        if (satiety <= 0)
+        {
+            health -= health * 0.05f * Time.deltaTime;
+            StaminaConsum(stamina * 0.05f * Time.deltaTime);
+            return;
+        }
+
+        // 포만감이 0 이상이면 포만감을 소모하여 체력과 스태미너를 회복시킨다.
+        if (health < maxHealth)
+        {
+            satiety -= MetabolicRate * Time.deltaTime;
+            health += MetMetabolicGein * Time.deltaTime;
+
+            if (health > maxHealth)
+            {
+                health = maxHealth;
+            }
+        }
+
+        if (stamina < maxStamina)
+        {
+            satiety -= MetabolicRate * Time.deltaTime;
+            stamina += MetMetabolicGein * Time.deltaTime;
+
+            if (stamina > maxStamina)
+            {
+                stamina = maxStamina;
+            }
+        }
+
+        return;
+    }
+
+    public void StaminaConsum()
+    {
+        float staminaConsumption = BasicStaminaConsumption;
+        if (isRunning)
+        {
+            staminaConsumption = RunningStaminaConsumption;
+        }
+
+        if (stamina <= 0)
+        {
+            health -= staminaConsumption;
+            return;
+        }
+
+        if (isMoving)
+        {
+            
+            stamina -= staminaConsumption * Time.deltaTime;
+
+            if(stamina <= 0)
+            {
+                stamina = 0;
+            }
+        }
+        return;
+    }
+
+    public void StaminaConsum(float value)
+    {
+        if (stamina <= 0)
+        {
+            health -= value;
+            return;
+        }
+
+        stamina -= value;
+
+        if (stamina <= 0)
+        {
+            stamina = 0;
+        }
+    }
     public void SetMoving(bool value)
     {
         isMoving = value;
@@ -76,7 +183,7 @@ public class AnimalStat : MonoBehaviour
     {
         if (value)
         {
-            if (stamina < BasicStaminaConsumption)
+            if (stamina <= BasicStaminaConsumption)
             {
                 isRunning = false;
                 isResting = true;
@@ -89,7 +196,7 @@ public class AnimalStat : MonoBehaviour
 
         else
         {
-            if (stamina < BasicStaminaConsumption)
+            if (stamina <= BasicStaminaConsumption)
             {
                 isResting = true;
             }

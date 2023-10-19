@@ -4,15 +4,12 @@ using UnityEngine;
 using Drawing;
 
 public class Flee : NavigationNode
-{
-    public AnimalStat stat;
-    
+{   
     public float searchRadius;
     public LayerMask layerMask;
 
-    public Flee(AnimalStat stat, Transform target, float searchRadius, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans)
+    public Flee(AnimalBehaviour behaviour, AnimalStat stat, Transform target, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans, stat, behaviour)
     {
-        this.stat = stat;
         this.searchRadius = searchRadius;
 
         layerMask = 0;
@@ -30,22 +27,9 @@ public class Flee : NavigationNode
         }
     }
 
-    public override bool Serch()
+    public override SerchResult Search()
     {
-        List<Transform> animals = new List<Transform>();
-
-        Draw.CircleXY(thisTrans.position, searchRadius);
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
-
-        if (colliders == null || colliders.Length == 0)
-        {
-            return false;
-        }
-
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            animals.Add(colliders[i].transform);
-        }
+        List<Transform> animals = behaviour.naturalEnemys;
 
         if (animals.Count == 1)
         {
@@ -72,7 +56,7 @@ public class Flee : NavigationNode
 
             target.position = fleePosition;
         }
-        return true;
+        return SerchResult.Running;
     }
 
     protected override void OnStart()
@@ -81,17 +65,5 @@ public class Flee : NavigationNode
 
     protected override void OnStop()
     {
-    }
-
-    protected override NodeState OnUpdate()
-    {
-        if (Serch())
-        {
-            return NodeState.Success;
-        }
-        else
-        {
-            return NodeState.Failure;
-        }
     }
 }

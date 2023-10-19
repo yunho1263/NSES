@@ -9,6 +9,7 @@ public class ConditionNode : DecoratorNode
 {
     public delegate bool Condition();
     public Condition condition;
+    public object value;
 
     // condition이 true일 때 자식 노드를 실행할지 false일 때 실행할지
     public bool runWhenTrue;
@@ -42,7 +43,7 @@ public class ConditionNode : DecoratorNode
 
         if (runWhenTrue)
         {
-            return condition() ? child.Update() : NodeState.Failure;
+            return condition() ? child.Update() : NodeState.Success;
         }
         else
         {

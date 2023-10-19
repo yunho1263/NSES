@@ -6,11 +6,11 @@ public class HerbivorePlantsNavigation : NavigationNode
 {
     public float searchRadius;
 
-    public HerbivorePlantsNavigation(Transform target, float searchRadius, Transform p_thisTrans) : base(target, p_thisTrans)
+    public HerbivorePlantsNavigation(AnimalBehaviour behaviour, AnimalStat stat, Transform target, Transform p_thisTrans) : base(target, p_thisTrans, stat, behaviour)
     {
-        this.searchRadius = searchRadius;
+        searchRadius = stat.ViewRange;
     }
-    public override bool Serch()
+    public override SerchResult Search()
     {
         List<Transform> plants = new List<Transform>();
         LayerMask layerMask = 1 << LayerMask.NameToLayer("Plants");
@@ -19,7 +19,7 @@ public class HerbivorePlantsNavigation : NavigationNode
 
         if (colliders.Length == 0)
         {
-            return false;
+            return SerchResult.None;
         }
 
         //거리순으로 정렬
@@ -36,7 +36,7 @@ public class HerbivorePlantsNavigation : NavigationNode
         target.position = plants[0].position;
         position = target.position;
 
-        return true;
+        return SerchResult.Walking;
     }
 
     protected override void OnStart()
@@ -46,17 +46,5 @@ public class HerbivorePlantsNavigation : NavigationNode
     protected override void OnStop()
     {
 
-    }
-
-    protected override NodeState OnUpdate()
-    {
-        if(Serch())
-        {
-            return NodeState.Success;
-        }
-        else
-        {
-            return NodeState.Failure;
-        }
     }
 }

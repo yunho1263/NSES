@@ -1,8 +1,11 @@
+using Drawing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
+using static NavigationNode;
 
 public enum State
 {
@@ -27,8 +30,11 @@ public abstract class AnimalBehaviour : MonoBehaviour
 
     public Transform target;
 
+    public List<Transform> naturalEnemys;
+
     private void Start()
     {
+        animalStat.initialize();
         SetupTree();
     }
 
@@ -41,6 +47,8 @@ public abstract class AnimalBehaviour : MonoBehaviour
 
     private void Update()
     {
+        animalStat.Metabolic();
+        animalStat.StaminaConsum();
         tree.Update();
     }
 
@@ -50,17 +58,37 @@ public abstract class AnimalBehaviour : MonoBehaviour
     /// <returns>배고픔이 50%이하라면 true를 반환합니다.</returns>
     public bool HungerCondition()
     {
-        return animalStat.hunger * 0.5f <= animalStat.maxHunger;
+        return animalStat.satiety <= animalStat.maxSatiety * 0.5f ? true : false;
     }
 
     public bool StaminaCondition()
     {
-        return animalStat.stamina * 0.5f <= animalStat.maxStamina;
+        return animalStat.stamina <= animalStat.maxStamina * 0.5f ? true : false;
     }
 
     public bool HealthCondition()
     {
-        return animalStat.health * 0.5f <= animalStat.maxHealth;
+        return animalStat.health <= animalStat.maxHealth * 0.5f ? true : false;
+    }
+
+    public bool DetectedNaturalEnemy()
+    {
+        naturalEnemys.Clear();
+
+        Draw.CircleXY(transform.position, animalStat.ViewRange);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, animalStat.ViewRange, animalStat.NaturalEnemyLayerMask);
+
+        if (colliders == null || colliders.Length == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            naturalEnemys.Add(colliders[i].transform);
+        }
+
+        return true;
     }
 
     public bool BreedCondition()
