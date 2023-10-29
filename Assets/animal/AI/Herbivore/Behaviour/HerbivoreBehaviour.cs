@@ -18,7 +18,7 @@ public class HerbivoreBehaviour : AnimalBehaviour
                 new SelectorNode
                 (
                     new FindPartner(this),
-                    new Prowling(this, 1f)
+                    new Prowling(this)
                 )
             )
         ) ;

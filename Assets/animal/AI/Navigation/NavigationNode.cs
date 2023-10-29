@@ -1,3 +1,4 @@
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -25,7 +26,9 @@ public abstract class NavigationNode : ActionNode
 
     protected SearchResult searchResult;
 
-    public bool IsArrival => behaviour.aiPath.isStopped;
+    public AIPath aiPath => behaviour.aiPath;
+
+    public bool IsArrival => !aiPath.pathPending && (aiPath.reachedEndOfPath || !aiPath.hasPath);
 
     public NavigationNode(AnimalBehaviour behaviour)
     {

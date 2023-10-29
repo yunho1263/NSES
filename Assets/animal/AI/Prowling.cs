@@ -4,12 +4,8 @@ using UnityEngine;
 
 public class Prowling : NavigationNode
 {
-    float interval;
-    float startTime;
-
-    public Prowling(AnimalBehaviour behaviour, float interval) : base(behaviour)
+    public Prowling(AnimalBehaviour behaviour) : base(behaviour)
     {
-        this.interval = interval;
     }
 
     public override SearchResult Search()
@@ -22,23 +18,31 @@ public class Prowling : NavigationNode
 
     protected override void OnStart()
     {
-        startTime = Time.time;
-        Search();
+
     }
 
     protected override void OnStop()
     {
-        startTime = 0;
+
     }
 
     protected override NodeState OnUpdate()
     {
-        behaviour.state = State.Idle;
+        stat.SetMoving(true);
+        stat.SetRunning(false);
 
-        if (Time.time - startTime > interval)
+        if (stat.isResting)
         {
-            return NodeState.Success;
+            target.position = thisTrans.position;
+            return NodeState.Failure;
         }
+
+        if (IsArrival)
+        {
+            Search();
+        }
+
+        behaviour.state = State.Idle;
 
         return NodeState.Running;
     }
