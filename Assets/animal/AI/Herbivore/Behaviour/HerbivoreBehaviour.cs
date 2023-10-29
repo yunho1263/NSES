@@ -7,24 +7,20 @@ public class HerbivoreBehaviour : AnimalBehaviour
 {
     public override void SetupTree()
     {
-        BranchNode rootBehaviour = new BranchNode
+        SelectorNode rootBehaviour = new SelectorNode
         (
-            // 근처에 위험한 동물이 있다면 도망간다
-            () => DetectedNaturalEnemy(), new Flee(this, animalStat, target , animalStat.animalType, transform),
+            new Flee(this),
 
-            new BranchNode
+            new SelectorNode
             (
-                // 허기가 50%이하면 먹이를 찾는다
-                () => HungerCondition(), new HerbivorePlantsNavigation(this, animalStat, target, transform),
+                new HerbivorePlantsNavigation(this),
 
-                new BranchNode
+                new SelectorNode
                 (
-                    // 여유가 있다면 짝짖기를 할 파트너를 찾는다
-                    () => BreedCondition(), new FindPartner(this, animalStat, target, animalStat.animalType, transform),
-
-                    new DoNoting(target, transform, animalStat, this), true
-                ), true
-            ), true
+                    new FindPartner(this),
+                    new Prowling(this, 1f)
+                )
+            )
         ) ;
 
         tree = new BehaviourTree()

@@ -50,12 +50,12 @@ public class AnimalStat : MonoBehaviour
     public float maxDamage;
     public float damage;
 
+    public float Speed => isRunning ? maxSpeed : maxSpeed * 0.5f;
     public float maxSpeed;
-    public float speed;
     public bool isMoving;
     public bool isRunning;
     public bool isResting;
-    public float BasicStaminaConsumption => speed * (xSize * ySize);
+    public float BasicStaminaConsumption => Speed * (xSize * ySize);
     public float RunningStaminaConsumption => BasicStaminaConsumption * 2f;
 
     public float maxAge;
@@ -79,7 +79,7 @@ public class AnimalStat : MonoBehaviour
     {
         health = maxHealth;
         stamina = maxStamina;
-        satiety = maxSatiety * 0.5f;
+        satiety = maxSatiety * 0.7f;
 
         NaturalEnemyLayerMask = 0;
 
@@ -176,7 +176,23 @@ public class AnimalStat : MonoBehaviour
     }
     public void SetMoving(bool value)
     {
-        isMoving = value;
+        if (stamina <= BasicStaminaConsumption)
+        {
+            isResting = true;
+            return;
+        }
+
+        if (value)
+        {
+            isMoving = true;
+            isResting = false;
+        }
+
+        else
+        {
+            isMoving = false;
+            isResting = true;
+        }
     }
 
     public void SetRunning(bool value)
@@ -186,20 +202,14 @@ public class AnimalStat : MonoBehaviour
             if (stamina <= BasicStaminaConsumption)
             {
                 isRunning = false;
-                isResting = true;
                 return;
             }
 
             isRunning = true;
-            isResting = false;
         }
 
         else
         {
-            if (stamina <= BasicStaminaConsumption)
-            {
-                isResting = true;
-            }
             isRunning = false;
         }
     }

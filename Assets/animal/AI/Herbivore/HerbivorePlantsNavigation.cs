@@ -6,12 +6,18 @@ public class HerbivorePlantsNavigation : NavigationNode
 {
     public float searchRadius;
 
-    public HerbivorePlantsNavigation(AnimalBehaviour behaviour, AnimalStat stat, Transform target, Transform p_thisTrans) : base(target, p_thisTrans, stat, behaviour)
+    public HerbivorePlantsNavigation(AnimalBehaviour behaviour) : base(behaviour)
     {
-        searchRadius = stat.ViewRange;
+        searchRadius = behaviour.animalStat.ViewRange;
     }
-    public override SerchResult Search()
+    public override SearchResult Search()
     {
+        if (behaviour.HungryCondition == false)
+        {
+            target.position = thisTrans.position;
+            return SearchResult.None;
+        }
+
         List<Transform> plants = new List<Transform>();
         LayerMask layerMask = 1 << LayerMask.NameToLayer("Plants");
 
@@ -19,8 +25,11 @@ public class HerbivorePlantsNavigation : NavigationNode
 
         if (colliders.Length == 0)
         {
-            return SerchResult.None;
+            target.position = thisTrans.position;
+            return SearchResult.None;
         }
+
+        behaviour.state = State.Seek;
 
         //거리순으로 정렬
         for (int i = 0; i < colliders.Length; i++)
@@ -34,9 +43,14 @@ public class HerbivorePlantsNavigation : NavigationNode
         });
 
         target.position = plants[0].position;
-        position = target.position;
 
-        return SerchResult.Walking;
+        if (Vector3.Distance(thisTrans.position, Position) <= 0.1f)
+        {
+            target.position = thisTrans.position;
+            return SearchResult.Stop;
+        }
+
+        return SearchResult.Walking;
     }
 
     protected override void OnStart()
@@ -46,5 +60,33 @@ public class HerbivorePlantsNavigation : NavigationNode
     protected override void OnStop()
     {
 
+    }
+
+    protected override NodeState OnUpdate()
+    {
+        searchResult = Search();
+
+        switch (searchResult)
+        {
+            case SearchResult.None:
+                stat.SetMoving(false);
+                stat.SetRunning(false);
+                return NodeState.Failure;
+
+            case SearchResult.Walking:
+                stat.SetMoving(true);
+                stat.SetRunning(false);
+                return NodeState.Running;
+
+            case SearchResult.Stop:
+                stat.SetMoving(false);
+                stat.SetRunning(false);
+                return NodeState.Success;
+
+            default:
+                stat.SetMoving(false);
+                stat.SetRunning(false);
+                return NodeState.Failure;
+        }
     }
 }

@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class DoNoting : NavigationNode
 {
-    public DoNoting(Transform target, Transform p_thisTrans, AnimalStat stat, AnimalBehaviour behaviour) : base(target, p_thisTrans, stat, behaviour)
+    public DoNoting(AnimalBehaviour behaviour) : base(behaviour)
     {
     }
 
-    public override SerchResult Search()
+    public override SearchResult Search()
     {
-        return SerchResult.Stop;
+        return SearchResult.Stop;
     }
 
     protected override void OnStart()
@@ -19,5 +19,17 @@ public class DoNoting : NavigationNode
 
     protected override void OnStop()
     {
+    }
+
+    protected override NodeState OnUpdate()
+    {
+        searchResult = Search();
+
+        target.position = thisTrans.position;
+
+        stat.SetMoving(false);
+        stat.SetRunning(false);
+
+        return NodeState.Success;
     }
 }

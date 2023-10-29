@@ -2,19 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 순서 실행 노드
-/// </summary>
-public class SequencerNode : CompositeNode
+public class SelectorSequencerNode : CompositeNode
 {
-
-    public SequencerNode(params BT_Node[] nodes)
-    {
-        children.AddRange(nodes);
-    }
-
     int current;
-
     protected override void OnStart()
     {
         current = 0;
@@ -22,7 +12,6 @@ public class SequencerNode : CompositeNode
 
     protected override void OnStop()
     {
-
     }
 
     protected override NodeState OnUpdate()
@@ -35,10 +24,10 @@ public class SequencerNode : CompositeNode
                 return NodeState.Running;
 
             case NodeState.Success:
+                return NodeState.Success;
+            case NodeState.Failure:
                 current++;
                 break;
-            case NodeState.Failure:
-                return NodeState.Failure;
         }
 
         return current == children.Count ? NodeState.Success : NodeState.Running;

@@ -6,7 +6,7 @@ public class BranchNode : ConditionNode
 {
     BT_Node branchNode;
 
-    public BranchNode(Condition condition, BT_Node branch1, BT_Node branch2, bool runWhenTrue) : base(condition, branch1, runWhenTrue)
+    public BranchNode(Condition condition, BT_Node branch1, BT_Node branch2) : base(condition, branch1)
     {
         branchNode = branch2;
     }
@@ -27,13 +27,6 @@ public class BranchNode : ConditionNode
             return condition() ? NodeState.Success : NodeState.Failure;
         }
 
-        if (runWhenTrue)
-        {
-            return condition() ? child.Update() : branchNode.Update();
-        }
-        else
-        {
-            return condition() ? branchNode.Update() : child.Update();
-        }
+        return condition() ? child.Update() : branchNode.Update();
     }
 }

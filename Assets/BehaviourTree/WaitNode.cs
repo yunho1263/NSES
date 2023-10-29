@@ -9,6 +9,11 @@ public class WaitNode : ActionNode
     public float waitTime = 0;
     public float startTime;
 
+    public WaitNode(float waitTime)
+    {
+        this.waitTime = waitTime;
+    }
+
     protected override void OnStart()
     {
         startTime = Time.time;
@@ -25,6 +30,9 @@ public class WaitNode : ActionNode
         {
             return NodeState.Success;
         }
-        return NodeState.Running;
+        else
+        {
+            return NodeState.Running;
+        }
     }
 }

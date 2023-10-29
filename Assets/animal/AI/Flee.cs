@@ -1,20 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
-using Drawing;
 
 public class Flee : NavigationNode
 {   
     public float searchRadius;
     public LayerMask layerMask;
 
-    public Flee(AnimalBehaviour behaviour, AnimalStat stat, Transform target, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans, stat, behaviour)
+    public Flee(AnimalBehaviour behaviour) : base(behaviour)
     {
-        this.searchRadius = searchRadius;
+        this.searchRadius = behaviour.animalStat.ViewRange;
 
         layerMask = 0;
 
-        switch (animalType)
+        switch (behaviour.animalStat.animalType)
         {
             case AnimalType.Herbivore:
                 layerMask = 1 << LayerMask.NameToLayer("Omnivore") | 1 << LayerMask.NameToLayer("Carnivore");
@@ -27,9 +27,24 @@ public class Flee : NavigationNode
         }
     }
 
-    public override SerchResult Search()
+    public override SearchResult Search()
     {
-        List<Transform> animals = behaviour.naturalEnemys;
+        List<Transform> animals = new List<Transform>();
+
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
+
+        if (colliders == null || colliders.Length == 0)
+        {
+            target.position = thisTrans.position;
+            return SearchResult.None;
+        }
+
+        behaviour.state = State.Avoid;
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            animals.Add(colliders[i].transform);
+        }
 
         if (animals.Count == 1)
         {
@@ -56,7 +71,7 @@ public class Flee : NavigationNode
 
             target.position = fleePosition;
         }
-        return SerchResult.Running;
+        return SearchResult.Running;
     }
 
     protected override void OnStart()
@@ -65,5 +80,28 @@ public class Flee : NavigationNode
 
     protected override void OnStop()
     {
+    }
+
+    protected override NodeState OnUpdate()
+    {
+        searchResult = Search();
+
+        switch (searchResult)
+        {
+            case SearchResult.Running:
+                stat.SetMoving(true);
+                stat.SetRunning(true);
+                return NodeState.Running;
+
+            case SearchResult.None:
+                stat.SetMoving(false);
+                stat.SetRunning(false);
+                return NodeState.Failure;
+            default:
+                target.position = thisTrans.position;
+                stat.SetMoving(false);
+                stat.SetRunning(false);
+                return NodeState.Failure;
+        }
     }
 }

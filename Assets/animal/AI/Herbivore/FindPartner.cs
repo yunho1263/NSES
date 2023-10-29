@@ -7,11 +7,11 @@ public class FindPartner : NavigationNode
     public float searchRadius;
     public LayerMask layerMask;
 
-    public FindPartner(AnimalBehaviour behaviour, AnimalStat stat, Transform target, AnimalType animalType, Transform p_thisTrans) : base(target, p_thisTrans, stat, behaviour)
+    public FindPartner(AnimalBehaviour behaviour) : base(behaviour)
     {
-        searchRadius = stat.ViewRange;
+        searchRadius = behaviour.animalStat.ViewRange;
 
-        switch (animalType)
+        switch (behaviour.animalStat.animalType)
         {
             case AnimalType.Herbivore:
                 layerMask = 1 << LayerMask.NameToLayer("Herbivore");
@@ -27,32 +27,41 @@ public class FindPartner : NavigationNode
         }
     }
 
-    public override SerchResult Search()
+    public override SearchResult Search()
     {
+        if (behaviour.LowHealthCondition && behaviour.LowStaminaCondition && behaviour.HungryCondition)
+        {
+            return SearchResult.None;
+        }
+
         List<Transform> animals = new List<Transform>();
 
         Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
 
-        if (colliders.Length == 0)
-        {
-            return SerchResult.None;
-        }
+        behaviour.state = State.Breed;
 
-        //거리순으로 정렬
         for (int i = 0; i < colliders.Length; i++)
         {
             animals.Add(colliders[i].transform);
         }
 
+        //리스트에서 자기 자신을 제거한다
+        animals.Remove(thisTrans);
+
+        if (animals.Count == 0)
+        {
+            return SearchResult.None;
+        }
+
+        //거리순으로 정렬
         animals.Sort(delegate (Transform a, Transform b)
         {
             return Vector2.Distance(a.position, thisTrans.position).CompareTo(Vector2.Distance(b.position, thisTrans.position));
         });
 
         target.position = animals[0].position;
-        position = target.position;
 
-        return SerchResult.Walking;
+        return SearchResult.Walking;
     }
 
     protected override void OnStart()
@@ -61,5 +70,28 @@ public class FindPartner : NavigationNode
 
     protected override void OnStop()
     {
+    }
+
+    protected override NodeState OnUpdate()
+    {
+        searchResult = Search();
+
+        switch (searchResult)
+        {
+            case SearchResult.None:
+                stat.SetMoving(false);
+                stat.SetRunning(false);
+                return NodeState.Failure;
+            case SearchResult.Walking:
+                stat.SetMoving(true);
+                stat.SetRunning(true);
+                return NodeState.Running;
+            case SearchResult.Stop:
+                stat.SetMoving(false);
+                stat.SetRunning(false);
+                return NodeState.Running;
+            default:
+                return NodeState.Failure;
+        }
     }
 }
