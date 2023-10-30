@@ -23,12 +23,9 @@ public class DoNoting : NavigationNode
 
     protected override NodeState OnUpdate()
     {
-        searchResult = Search();
+        AiPath.destination = ThisTransform.position;
 
-        target.position = thisTrans.position;
-
-        stat.SetMoving(false);
-        stat.SetRunning(false);
+        Stat.SetMoving(false, false);
 
         return NodeState.Success;
     }

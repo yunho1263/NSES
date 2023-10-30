@@ -31,11 +31,10 @@ public class Flee : NavigationNode
     {
         List<Transform> animals = new List<Transform>();
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(ThisTransform.position, searchRadius, layerMask);
 
         if (colliders == null || colliders.Length == 0)
         {
-            target.position = thisTrans.position;
             return SearchResult.None;
         }
 
@@ -49,8 +48,8 @@ public class Flee : NavigationNode
         if (animals.Count == 1)
         {
             // 반대방향으로 이동한다
-            Vector2 direction = (Vector2)thisTrans.position - (Vector2)animals[0].position;
-            target.position = (Vector2)thisTrans.position + direction;
+            Vector2 direction = (Vector2)ThisTransform.position - (Vector2)animals[0].position;
+            AiPath.destination = (Vector2)ThisTransform.position + direction;
         }
         else
         {
@@ -59,8 +58,8 @@ public class Flee : NavigationNode
             // 포식자들의 가중치를 계산하여 포식자들이 적은 방향으로 이동한다
             for (int i = 0; i < animals.Count; i++)
             {
-                Vector2 direction = (Vector2)thisTrans.position - (Vector2)animals[i].position;
-                float distance = Vector2.Distance(thisTrans.position, animals[i].position);
+                Vector2 direction = (Vector2)ThisTransform.position - (Vector2)animals[i].position;
+                float distance = Vector2.Distance(ThisTransform.position, animals[i].position);
 
                 // 포식자와의 거리가 멀수록 가중치가 작아진다
                 float weight = 1 / distance * 7;
@@ -69,7 +68,7 @@ public class Flee : NavigationNode
                 fleePosition += direction * weight;
             }
 
-            target.position = fleePosition;
+            AiPath.destination = fleePosition;
         }
         return SearchResult.Running;
     }
@@ -89,18 +88,14 @@ public class Flee : NavigationNode
         switch (searchResult)
         {
             case SearchResult.Running:
-                stat.SetMoving(true);
-                stat.SetRunning(true);
-                return NodeState.Running;
+                Stat.SetMoving(true, true);
+                return NodeState.Success;
 
             case SearchResult.None:
-                stat.SetMoving(false);
-                stat.SetRunning(false);
+                Stat.SetMoving(false, false);
                 return NodeState.Failure;
             default:
-                target.position = thisTrans.position;
-                stat.SetMoving(false);
-                stat.SetRunning(false);
+                Stat.SetMoving(false, false);
                 return NodeState.Failure;
         }
     }

@@ -4,21 +4,26 @@ using UnityEngine;
 
 public class Prowling : NavigationNode
 {
+    Vector3 savedPosition;
+
     public Prowling(AnimalBehaviour behaviour) : base(behaviour)
     {
     }
 
     public override SearchResult Search()
     {
-        Vector2 randomPosition = Random.insideUnitCircle * behaviour.animalStat.ViewRange;
-        target.position = (Vector2)thisTrans.position + randomPosition;
+        Vector3 randomPosition = Random.insideUnitCircle * behaviour.animalStat.ViewRange;
+        randomPosition.z = 0;
+        randomPosition += ThisTransform.position;
+        AiPath.destination = randomPosition;
+        savedPosition = randomPosition;
 
         return SearchResult.Walking;
     }
 
     protected override void OnStart()
     {
-
+        
     }
 
     protected override void OnStop()
@@ -28,22 +33,17 @@ public class Prowling : NavigationNode
 
     protected override NodeState OnUpdate()
     {
-        stat.SetMoving(true);
-        stat.SetRunning(false);
-
-        if (stat.isResting)
-        {
-            target.position = thisTrans.position;
-            return NodeState.Failure;
-        }
-
-        if (IsArrival)
-        {
-            Search();
-        }
-
+        Stat.SetMoving(true, false);
         behaviour.state = State.Idle;
 
-        return NodeState.Running;
+        if (IsArrival || AiPath.destination != savedPosition)
+        {
+            Search();
+            return NodeState.Success;
+        }
+
+        AiPath.destination = savedPosition;
+
+        return NodeState.Success;
     }
 }

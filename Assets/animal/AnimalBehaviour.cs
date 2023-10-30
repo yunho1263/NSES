@@ -15,6 +15,7 @@ public enum State
     Breed,
     Seek,
     Avoid,
+    Resting,
 }
 
 [Serializable]
@@ -52,6 +53,7 @@ public abstract class AnimalBehaviour : MonoBehaviour
         Draw.CircleXY(transform.position, animalStat.ViewRange);
         tree.Update();
         aiPath.maxSpeed = animalStat.Speed;
+        aiPath.SearchPath();
     }
 
     public bool HungryCondition => animalStat.satiety <= animalStat.maxSatiety * 0.5f ? true : false;

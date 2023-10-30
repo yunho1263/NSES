@@ -16,25 +16,19 @@ public abstract class NavigationNode : ActionNode
         None
     }
 
-    public Vector2 Position => target.position;
-    public Transform target;
-
-    public Transform thisTrans;
-
-    public AnimalStat stat;
     public AnimalBehaviour behaviour;
+    public Transform ThisTransform => behaviour.transform;
+    public AnimalStat Stat => behaviour.animalStat;
 
     protected SearchResult searchResult;
 
-    public AIPath aiPath => behaviour.aiPath;
+    public AIPath AiPath => behaviour.aiPath;
 
-    public bool IsArrival => !aiPath.pathPending && (aiPath.reachedEndOfPath || !aiPath.hasPath);
+    public bool IsArrival => !AiPath.pathPending && (AiPath.reachedEndOfPath || !AiPath.hasPath);
+    public bool IsOutOfView => Vector2.Distance(ThisTransform.position, AiPath.destination) > Stat.ViewRange;
 
     public NavigationNode(AnimalBehaviour behaviour)
     {
-        this.target = behaviour.target;
-        this.thisTrans = behaviour.transform;
-        this.stat = behaviour.animalStat;
         this.behaviour = behaviour;
     }
 

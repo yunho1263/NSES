@@ -14,18 +14,16 @@ public class HerbivorePlantsNavigation : NavigationNode
     {
         if (behaviour.HungryCondition == false)
         {
-            target.position = thisTrans.position;
             return SearchResult.None;
         }
 
         List<Transform> plants = new List<Transform>();
         LayerMask layerMask = 1 << LayerMask.NameToLayer("Plants");
 
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(thisTrans.position, searchRadius, layerMask);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(ThisTransform.position, searchRadius, layerMask);
 
         if (colliders.Length == 0)
         {
-            target.position = thisTrans.position;
             return SearchResult.None;
         }
 
@@ -39,14 +37,13 @@ public class HerbivorePlantsNavigation : NavigationNode
 
         plants.Sort(delegate (Transform a, Transform b)
         {
-            return Vector2.Distance(a.position, thisTrans.position).CompareTo(Vector2.Distance(b.position, thisTrans.position));
+            return Vector2.Distance(a.position, ThisTransform.position).CompareTo(Vector2.Distance(b.position, ThisTransform.position));
         });
 
-        target.position = plants[0].position;
+        AiPath.destination = plants[0].position;
 
-        if (Vector3.Distance(thisTrans.position, Position) <= 0.1f)
+        if (Vector3.Distance(ThisTransform.position, AiPath.destination) <= 0.1f)
         {
-            target.position = thisTrans.position;
             return SearchResult.Stop;
         }
 
@@ -69,23 +66,20 @@ public class HerbivorePlantsNavigation : NavigationNode
         switch (searchResult)
         {
             case SearchResult.None:
-                stat.SetMoving(false);
-                stat.SetRunning(false);
+                Stat.SetMoving(false, false);
                 return NodeState.Failure;
 
             case SearchResult.Walking:
-                stat.SetMoving(true);
-                stat.SetRunning(false);
-                return NodeState.Running;
+                Stat.SetMoving(true, false);
+                return NodeState.Success;
 
             case SearchResult.Stop:
-                stat.SetMoving(false);
-                stat.SetRunning(false);
+                AiPath.destination = ThisTransform.position;
+                Stat.SetMoving(false, false);
                 return NodeState.Success;
 
             default:
-                stat.SetMoving(false);
-                stat.SetRunning(false);
+                Stat.SetMoving(false, false);
                 return NodeState.Failure;
         }
     }

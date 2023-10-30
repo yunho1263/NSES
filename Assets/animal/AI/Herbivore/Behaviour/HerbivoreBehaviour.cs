@@ -7,21 +7,26 @@ public class HerbivoreBehaviour : AnimalBehaviour
 {
     public override void SetupTree()
     {
-        SelectorNode rootBehaviour = new SelectorNode
+        SequencerNode rootBehaviour = new SequencerNode
         (
-            new Flee(this),
+            new Resting(this),
 
             new SelectorNode
             (
-                new HerbivorePlantsNavigation(this),
+                new Flee(this),
 
                 new SelectorNode
                 (
-                    new FindPartner(this),
-                    new Prowling(this)
+                    new HerbivorePlantsNavigation(this),
+
+                    new SelectorNode
+                    (
+                        new FindPartner(this),
+                        new Prowling(this)
+                    )
                 )
             )
-        ) ;
+        );
 
         tree = new BehaviourTree()
         {
