@@ -6,9 +6,13 @@ public class HerbivorePlantsNavigation : NavigationNode
 {
     public float searchRadius;
 
+    EatPlant eatPlant;
+
     public HerbivorePlantsNavigation(AnimalBehaviour behaviour) : base(behaviour)
     {
         searchRadius = behaviour.animalStat.ViewRange;
+
+        eatPlant = new EatPlant(behaviour);
     }
     public override SearchResult Search()
     {
@@ -42,7 +46,7 @@ public class HerbivorePlantsNavigation : NavigationNode
 
         AiPath.destination = plants[0].position;
 
-        if (Vector3.Distance(ThisTransform.position, AiPath.destination) <= 0.1f)
+        if (IsArrival)
         {
             return SearchResult.Stop;
         }
@@ -76,7 +80,7 @@ public class HerbivorePlantsNavigation : NavigationNode
             case SearchResult.Stop:
                 AiPath.destination = ThisTransform.position;
                 Stat.SetMoving(false, false);
-                return NodeState.Success;
+                return eatPlant.Update();
 
             default:
                 Stat.SetMoving(false, false);

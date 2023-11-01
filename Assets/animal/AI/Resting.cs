@@ -36,7 +36,7 @@ public class Resting : ActionNode
         
             behaviour.animalStat.SetMoving(false, false);
         
-            return NodeState.Running;
+            return NodeState.Failure;
         }
 
         return NodeState.Success;

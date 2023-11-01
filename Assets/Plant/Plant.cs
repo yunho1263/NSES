@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -15,8 +16,12 @@ public class Plant : MonoBehaviour
 
     public float growRadius;
 
+    public int remaining;
+    public float FullnessPerServing => transform.localScale.x * 10;
+
     public int maxPlantCount;
     public GameObject plantPrefab;
+
 
     private void Start()
     {
@@ -74,5 +79,8 @@ public class Plant : MonoBehaviour
 
         //»ý¼º
         GameObject plant = Instantiate(plantPrefab, position, Quaternion.identity);
+
+        float scale = UnityEngine.Random.Range(0.3f, 1f);
+        plant.transform.localScale = new Vector3(scale, scale, scale);
     }
 }
