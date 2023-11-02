@@ -27,7 +27,6 @@ public abstract class AnimalBehaviour : MonoBehaviour
 
     public State state;
     public AnimalStat animalStat;
-    public AnimalBreed animalBreed;
 
     public Transform target;
 

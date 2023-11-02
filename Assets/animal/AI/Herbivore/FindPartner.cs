@@ -7,11 +7,15 @@ public class FindPartner : NavigationNode
     public float searchRadius;
     public LayerMask layerMask;
 
+    public Mating mating;
+
+    public AnimalStat stat => behaviour.animalStat;
+
     public FindPartner(AnimalBehaviour behaviour) : base(behaviour)
     {
-        searchRadius = behaviour.animalStat.ViewRange;
+        searchRadius = stat.ViewRange;
 
-        switch (behaviour.animalStat.animalType)
+        switch (stat.animalType)
         {
             case AnimalType.Herbivore:
                 layerMask = 1 << LayerMask.NameToLayer("Herbivore");
@@ -24,6 +28,15 @@ public class FindPartner : NavigationNode
                 break;
             default:
                 break;
+        }
+
+        if (stat.sex == Sex.Male)
+        {
+            mating = new MatingMale(this);
+        }
+        else
+        {
+            mating = new MatingFemale(this);
         }
     }
 
@@ -51,6 +64,31 @@ public class FindPartner : NavigationNode
         if (animals.Count == 0)
         {
             return SearchResult.None;
+        }
+
+        List<Transform> removeAnimals = new List<Transform>();
+
+        foreach (Transform transform in animals)
+        {
+            AnimalStat animalStat;
+            transform.TryGetComponent(out animalStat);
+
+            if (animalStat)
+            {
+                if (stat.sex == stat.sex)
+                {
+                    removeAnimals.Add(transform);
+                }
+                else if (!animalStat.CanBreeding)
+                {
+                    removeAnimals.Add(transform);
+                }
+            }
+        }
+
+        foreach (Transform transform in removeAnimals)
+        {
+            animals.Remove(transform);
         }
 
         //거리순으로 정렬
@@ -89,7 +127,7 @@ public class FindPartner : NavigationNode
             case SearchResult.Stop:
                 AiPath.destination = ThisTransform.position;
                 Stat.SetMoving(false, false);
-                return NodeState.Success;
+                return mating.Update();
 
             default:
                 Stat.SetMoving(false, false);

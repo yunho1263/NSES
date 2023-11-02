@@ -44,7 +44,7 @@ public class AnimalStat : MonoBehaviour
     public float maxSatiety;
     public float satiety;
 
-    public float MetabolicRate => 1f * (xSize * ySize) * 0.5f;
+    public float MetabolicRate => 1f * (xSize * ySize);
     public float MetMetabolicGein => 1f * (xSize * ySize) * 2;
 
     public float maxDamage;
@@ -66,6 +66,14 @@ public class AnimalStat : MonoBehaviour
 
     public float minBreedPerTime;
     public float maxBreedPerTime;
+
+    public bool canBreed;
+    public bool breedIsReady;
+
+    public float breedCount;
+    public float breedcooldown;
+
+    public bool CanBreeding => canBreed && breedIsReady;
 
     public float xSize;
     public float ySize;

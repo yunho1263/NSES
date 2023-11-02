@@ -16,42 +16,44 @@ public class HerbivorePlantsNavigation : NavigationNode
     }
     public override SearchResult Search()
     {
-        if (behaviour.HungryCondition == false)
+        if (behaviour.HungryCondition || behaviour.LowStaminaCondition)
         {
-            return SearchResult.None;
+            List<Transform> plants = new List<Transform>();
+            LayerMask layerMask = 1 << LayerMask.NameToLayer("Plants");
+
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(ThisTransform.position, searchRadius, layerMask);
+
+            if (colliders.Length == 0)
+            {
+                return SearchResult.None;
+            }
+
+            behaviour.state = State.Seek;
+
+            //거리순으로 정렬
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                plants.Add(colliders[i].transform);
+            }
+
+            plants.Sort(delegate (Transform a, Transform b)
+            {
+                return Vector2.Distance(a.position, ThisTransform.position).CompareTo(Vector2.Distance(b.position, ThisTransform.position));
+            });
+
+            AiPath.destination = plants[0].position;
+
+            if (IsArrival)
+            {
+                return SearchResult.Stop;
+            }
+
+            return SearchResult.Walking;
+
+            
         }
 
-        List<Transform> plants = new List<Transform>();
-        LayerMask layerMask = 1 << LayerMask.NameToLayer("Plants");
-
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(ThisTransform.position, searchRadius, layerMask);
-
-        if (colliders.Length == 0)
-        {
-            return SearchResult.None;
-        }
-
-        behaviour.state = State.Seek;
-
-        //거리순으로 정렬
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            plants.Add(colliders[i].transform);
-        }
-
-        plants.Sort(delegate (Transform a, Transform b)
-        {
-            return Vector2.Distance(a.position, ThisTransform.position).CompareTo(Vector2.Distance(b.position, ThisTransform.position));
-        });
-
-        AiPath.destination = plants[0].position;
-
-        if (IsArrival)
-        {
-            return SearchResult.Stop;
-        }
-
-        return SearchResult.Walking;
+        return SearchResult.None;
     }
 
     protected override void OnStart()
