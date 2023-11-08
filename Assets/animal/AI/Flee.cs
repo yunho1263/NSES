@@ -10,11 +10,11 @@ public class Flee : NavigationNode
 
     public Flee(AnimalBehaviour behaviour) : base(behaviour)
     {
-        this.searchRadius = behaviour.animalStat.ViewRange;
+        this.searchRadius = behaviour.stat.ViewRange;
 
         layerMask = 0;
 
-        switch (behaviour.animalStat.animalType)
+        switch (behaviour.stat.animalType)
         {
             case AnimalType.Herbivore:
                 layerMask = 1 << LayerMask.NameToLayer("Omnivore") | 1 << LayerMask.NameToLayer("Carnivore");

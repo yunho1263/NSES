@@ -12,7 +12,7 @@ public class Prowling : NavigationNode
 
     public override SearchResult Search()
     {
-        Vector3 randomPosition = Random.insideUnitCircle * behaviour.animalStat.ViewRange;
+        Vector3 randomPosition = Random.insideUnitCircle * behaviour.stat.ViewRange;
         randomPosition.z = 0;
         randomPosition += ThisTransform.position;
         AiPath.destination = randomPosition;

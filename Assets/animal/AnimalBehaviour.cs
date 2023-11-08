@@ -26,7 +26,7 @@ public abstract class AnimalBehaviour : MonoBehaviour
     public BehaviourTree tree;
 
     public State state;
-    public AnimalStat animalStat;
+    public AnimalStat stat;
 
     public Transform target;
 
@@ -34,30 +34,32 @@ public abstract class AnimalBehaviour : MonoBehaviour
 
     private void Start()
     {
-        animalStat.initialize();
-        SetupTree();
+        Initialize();
     }
 
     public void Initialize()
     {
-
+        stat.initialize();
+        SetupTree();
     }
 
     public abstract void SetupTree();
 
     private void Update()
     {
-        animalStat.Metabolic();
-        animalStat.StaminaConsum();
-        Draw.CircleXY(transform.position, animalStat.ViewRange);
+        stat.Metabolic();
+        stat.StaminaConsum();
+        Draw.CircleXY(transform.position, stat.ViewRange);
         tree.Update();
-        aiPath.maxSpeed = animalStat.Speed;
+        aiPath.maxSpeed = stat.Speed;
         aiPath.SearchPath();
     }
 
-    public bool HungryCondition => animalStat.satiety <= animalStat.maxSatiety * 0.5f ? true : false;
+    #region 컨디션 메소드
+    public bool HungryCondition => stat.satiety <= stat.maxSatiety * 0.5f ? true : false;
 
-    public bool LowStaminaCondition => animalStat.stamina <= animalStat.maxStamina * 0.5f ? true : false;
+    public bool LowStaminaCondition => stat.stamina <= stat.maxStamina * 0.5f ? true : false;
 
-    public bool LowHealthCondition => animalStat.health <= animalStat.maxHealth * 0.5f ? true : false;
+    public bool LowHealthCondition => stat.health <= stat.maxHealth * 0.5f ? true : false;
+    #endregion
 }

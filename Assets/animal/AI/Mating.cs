@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Mating : ActionNode
 {
+    public AnimalBehaviour behaviour => findPartnerNode.behaviour;
+
     public Mating(FindPartner node)
     {
         findPartnerNode = node;

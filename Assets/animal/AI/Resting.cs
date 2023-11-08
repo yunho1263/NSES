@@ -13,10 +13,10 @@ public class Resting : ActionNode
 
     protected override void OnStart()
     {
-        if (behaviour.animalStat.stamina <= 0)
+        if (behaviour.stat.stamina <= 0)
         {
-            behaviour.animalStat.stamina = 0;
-            behaviour.animalStat.SetMoving(false, false);
+            behaviour.stat.stamina = 0;
+            behaviour.stat.SetMoving(false, false);
             behaviour.state = State.Resting;
         }
     }
@@ -29,12 +29,12 @@ public class Resting : ActionNode
     {
         if (behaviour.state == State.Resting)
         {
-            if (behaviour.animalStat.stamina > behaviour.animalStat.MinStaminaToRecall)
+            if (behaviour.stat.stamina > behaviour.stat.MinStaminaToRecall)
             {
                 return NodeState.Success;
             }
         
-            behaviour.animalStat.SetMoving(false, false);
+            behaviour.stat.SetMoving(false, false);
         
             return NodeState.Failure;
         }

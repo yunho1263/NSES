@@ -31,10 +31,10 @@ public enum Sex
 
 public class AnimalStat : MonoBehaviour
 {
+    #region 기본 스탯
     public AnimalType animalType;
     public List<Personality> personalitys;
-    public Sex sex;
-
+    
     public float maxHealth;
     public float health;
 
@@ -44,11 +44,17 @@ public class AnimalStat : MonoBehaviour
     public float maxSatiety;
     public float satiety;
 
-    public float MetabolicRate => 1f * (xSize * ySize);
-    public float MetMetabolicGein => 1f * (xSize * ySize) * 2;
-
     public float maxDamage;
     public float damage;
+
+    public float maxAge;
+    public float age;
+
+    #endregion
+
+    #region 이동 관련
+    public float MetabolicRate => 1f * (xSize * ySize);
+    public float MetMetabolicGein => 1f * (xSize * ySize) * 2;
 
     public float Speed => isRunning ? maxSpeed : maxSpeed * 0.5f;
     public float maxSpeed;
@@ -57,11 +63,12 @@ public class AnimalStat : MonoBehaviour
     public float BasicStaminaConsumption => Speed * (xSize * ySize);
     public float RunningStaminaConsumption => BasicStaminaConsumption * 2f;
     public float MinStaminaToRecall => maxStamina * 0.25f;
+    #endregion
 
-    public float maxAge;
-    public float age;
+    #region 번식 관련
+    public Sex sex;
 
-    public float maxBreedCouunt;
+    public float maxBreedCount;
     public float defaultbreedCooldown;
 
     public float minBreedPerTime;
@@ -75,12 +82,17 @@ public class AnimalStat : MonoBehaviour
 
     public bool CanBreeding => canBreed && breedIsReady;
 
+    public GameObject babyPrefab;
+    #endregion
+
+    #region 크기, 시야관련
     public float xSize;
     public float ySize;
 
     public float ViewRange;
 
     public LayerMask NaturalEnemyLayerMask;
+    #endregion
 
 
     public void initialize()

@@ -9,7 +9,7 @@ public class FindPartner : NavigationNode
 
     public Mating mating;
 
-    public AnimalStat stat => behaviour.animalStat;
+    public AnimalStat stat => behaviour.stat;
 
     public FindPartner(AnimalBehaviour behaviour) : base(behaviour)
     {
@@ -98,6 +98,11 @@ public class FindPartner : NavigationNode
         });
 
         AiPath.destination = animals[0].position;
+
+        if (IsArrival)
+        {
+            return SearchResult.Stop;
+        }
 
         return SearchResult.Walking;
     }

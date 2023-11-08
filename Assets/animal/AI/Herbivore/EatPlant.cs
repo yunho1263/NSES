@@ -41,16 +41,16 @@ public class EatPlant : ActionNode
 
         if (Time.time - time > 1f)
         {
-            behaviour.animalStat.satiety += crrEatingPlant.FullnessPerServing;
-            if (behaviour.animalStat.satiety > behaviour.animalStat.maxSatiety)
+            behaviour.stat.satiety += crrEatingPlant.FullnessPerServing;
+            if (behaviour.stat.satiety > behaviour.stat.maxSatiety)
             {
-                behaviour.animalStat.satiety = behaviour.animalStat.maxSatiety;
+                behaviour.stat.satiety = behaviour.stat.maxSatiety;
             }
 
-            behaviour.animalStat.stamina += crrEatingPlant.FullnessPerServing;
-            if (behaviour.animalStat.stamina > behaviour.animalStat.maxStamina)
+            behaviour.stat.stamina += crrEatingPlant.FullnessPerServing;
+            if (behaviour.stat.stamina > behaviour.stat.maxStamina)
             {
-                behaviour.animalStat.stamina = behaviour.animalStat.maxStamina;
+                behaviour.stat.stamina = behaviour.stat.maxStamina;
             }
 
             crrEatingPlant.remaining--;

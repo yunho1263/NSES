@@ -10,7 +10,7 @@ public class HerbivorePlantsNavigation : NavigationNode
 
     public HerbivorePlantsNavigation(AnimalBehaviour behaviour) : base(behaviour)
     {
-        searchRadius = behaviour.animalStat.ViewRange;
+        searchRadius = behaviour.stat.ViewRange;
 
         eatPlant = new EatPlant(behaviour);
     }

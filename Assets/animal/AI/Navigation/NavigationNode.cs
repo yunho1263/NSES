@@ -18,7 +18,7 @@ public abstract class NavigationNode : ActionNode
 
     public AnimalBehaviour behaviour;
     public Transform ThisTransform => behaviour.transform;
-    public AnimalStat Stat => behaviour.animalStat;
+    public AnimalStat Stat => behaviour.stat;
 
     protected SearchResult searchResult;
 

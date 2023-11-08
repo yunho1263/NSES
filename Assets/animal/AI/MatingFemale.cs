@@ -8,6 +8,34 @@ public class MatingFemale : Mating
     {
     }
 
+    public bool Accept(MatingMale male)
+    {
+        if (male == null)
+        {
+            return false;
+        }
+
+        if (behaviour.stat.canBreed)
+        {
+            partner = male.behaviour;
+        }
+
+        return partner != null;
+    }
+
+    public void Childbirth()
+    {
+        
+    }
+
+    public IEnumerator Mate()
+    {
+        partner = null;
+        yield return (partner != null);
+
+        // 
+    }
+
     public override void Breed()
     {
     }
