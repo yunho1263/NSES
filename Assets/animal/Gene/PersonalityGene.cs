@@ -138,9 +138,21 @@ public class PersonalityGene : Gene
         }
         else if (Random.value < 0.005f)
         {
-            int ran = Random.Range(0, recessivePersonalities.Count);
-            dominantPersonalities.Add(recessivePersonalities[ran]);
-            recessivePersonalities.RemoveAt(ran);
+            while (true)
+            {
+                int ran = Random.Range(0, Personality.GetValues(typeof(Personality)).Length);
+                Personality personality = (Personality)Personality.GetValues(typeof(Personality)).GetValue(ran);
+                if (!dominantPersonalities.Contains(personality))
+                {
+                    if (recessivePersonalities.Contains(personality))
+                    {
+                        recessivePersonalities.Remove(personality);
+                    }
+                    dominantPersonalities.Add(personality);
+
+                    break;
+                }
+            }
         }
     }
 }
