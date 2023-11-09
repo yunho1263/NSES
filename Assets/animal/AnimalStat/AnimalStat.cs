@@ -31,6 +31,8 @@ public enum Sex
 
 public class AnimalStat : MonoBehaviour
 {
+    public DNA dna;
+
     #region ±‚∫ª Ω∫≈»
     public AnimalType animalType;
     public List<Personality> personalitys;
