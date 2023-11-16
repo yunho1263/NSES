@@ -8,6 +8,9 @@ public class MatingFemale : Mating
     {
     }
 
+
+    public Queue<MatingMale> maleList = new();
+
     public bool Accept(MatingMale male)
     {
         if (male == null)
@@ -17,10 +20,10 @@ public class MatingFemale : Mating
 
         if (behaviour.stat.canBreed)
         {
-            partner = male.behaviour;
+            behaviour.partner = male.behaviour;
         }
 
-        return partner != null;
+        return behaviour.partner != null;
     }
 
     public void Childbirth()
@@ -28,20 +31,21 @@ public class MatingFemale : Mating
         
     }
 
-    public IEnumerator Mate()
-    {
-        partner = null;
-        yield return (partner != null);
-
-        // 
-    }
-
     public override void Breed()
     {
+        startTime = Time.time;
+        DNA dna = new DNA(behaviour.stat.dna, behaviour.partner.stat.dna);
+        AnimalBehaviour chB;
+        GameObject child = Object.Instantiate(behaviour.stat.babyPrefab, behaviour.transform.position, Quaternion.identity);
+        child.TryGetComponent(out chB);
+        chB.stat.dna = dna; 
+        chB.Initialize();
+        behaviour.stat.canBreed = false;
     }
 
     protected override void OnStart()
     {
+        behaviour.partner = null;
     }
 
     protected override void OnStop()
@@ -50,6 +54,43 @@ public class MatingFemale : Mating
 
     protected override NodeState OnUpdate()
     {
+        if (!behaviour.stat.canBreed)
+        {
+            if (Time.time - startTime > behaviour.stat.breedcooldown)
+            {
+                behaviour.stat.canBreed = true;
+            }
+            else
+            {
+                return NodeState.Running;
+            }
+        }
+
+        if (behaviour.partner == null && maleList.Count > 0)
+        {
+            AnimalBehaviour b;
+            while (true)
+            {
+                b = maleList.Dequeue().behaviour;
+                if (b.partner == null && b.stat.canBreed)
+                {
+                    break;
+                }
+            }
+
+            if (maleList.Count == 0)
+            {
+                return NodeState.Success;
+            }
+
+            behaviour.partner = b;
+            behaviour.partner.partner = behaviour;
+            Breed();
+            return NodeState.Success;
+        }
+
+        maleList.Clear();
+
         return NodeState.Success;
     }
 }

@@ -32,9 +32,16 @@ public abstract class AnimalBehaviour : MonoBehaviour
 
     public List<Transform> naturalEnemys;
 
+    public Mating mating;
+    public AnimalBehaviour partner;
+
     private void Start()
     {
-        Initialize();
+        if (stat.dna == null)
+        {
+            stat.dna = new DNA();
+            Initialize();
+        }
     }
 
     public void Initialize()

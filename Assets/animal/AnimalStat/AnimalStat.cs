@@ -77,12 +77,9 @@ public class AnimalStat : MonoBehaviour
     public float maxBreedPerTime;
 
     public bool canBreed;
-    public bool breedIsReady;
 
     public float breedCount;
     public float breedcooldown;
-
-    public bool CanBreeding => canBreed && breedIsReady;
 
     public GameObject babyPrefab;
     #endregion

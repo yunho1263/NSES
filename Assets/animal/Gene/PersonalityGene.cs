@@ -17,45 +17,11 @@ public class PersonalityGene : Gene
         recessivePersonalities.AddRange(gene1.recessivePersonalities);
         recessivePersonalities.AddRange(gene2.recessivePersonalities);
 
-        // 각 유전자의 dominantPersonalities 리스트들의 값들을 무작위로 결합
-        foreach (Personality personality in gene1.dominantPersonalities)
-        {
-            if (Random.value < 0.5f)
-            {
-                dominantPersonalities.Add(personality);
-            }
-            else
-            {
-                recessivePersonalities.Add(personality);
-            }
-        }
+        // dominantPersonalities를 결합한다
+        dominantPersonalities.AddRange(gene1.dominantPersonalities);
+        dominantPersonalities.AddRange(gene2.dominantPersonalities);
 
-        foreach (Personality personality in gene2.dominantPersonalities)
-        {
-            if (Random.value < 0.5f)
-            {
-                dominantPersonalities.Add(personality);
-            }
-            else
-            {
-                recessivePersonalities.Add(personality);
-            }
-        }
-
-        //recessivePersonalities에 중복되는 값이 있으면 두 값을 지우고 dominantPersonalities에 추가
-        recessivePersonalities.Sort();
-        for (int i = 0; i < recessivePersonalities.Count - 1; i++)
-        {
-            if (recessivePersonalities[i] == recessivePersonalities[i + 1])
-            {
-                dominantPersonalities.Add(recessivePersonalities[i]);
-                recessivePersonalities.RemoveAt(i);
-                recessivePersonalities.RemoveAt(i);
-                i--;
-            }
-        }
-
-        // dominantPersonalities에 중복되는 값이 있으면 하나의 값을 지운다
+        // dominantPersonalities의 중복을 제거한다
         dominantPersonalities.Sort();
         for (int i = 0; i < dominantPersonalities.Count - 1; i++)
         {
@@ -66,92 +32,88 @@ public class PersonalityGene : Gene
             }
         }
 
-        if (dominantPersonalities.Contains(Personality.Timid) && dominantPersonalities.Contains(Personality.Aggressive))
+        // 확률적으로 돌연변이를 일으켜 가지고 있지 않은 성격을 추가하거나 가지고 있는 성격을 제거한다
+        if (Random.value > 0.05f)
         {
-            //둘 중 하나를 무작위로 선택
-            if (Random.value < 0.5f)
+            if (Random.value > 0.5f)
             {
-                dominantPersonalities.Remove(Personality.Aggressive);
-                if (!recessivePersonalities.Contains(Personality.Aggressive))
+                Personality personality;
+                while (true)
                 {
-                    recessivePersonalities.Add(Personality.Aggressive);
+                    personality = (Personality)Random.Range(0, 4);
+                    if (dominantPersonalities.Contains(personality))
+                    {
+                        continue;
+                    }
+                    dominantPersonalities.Add(personality);
+                    break;
                 }
             }
             else
             {
-                dominantPersonalities.Remove(Personality.Timid);
-                if (!recessivePersonalities.Contains(Personality.Timid))
+                if (dominantPersonalities.Count > 0)
                 {
-                    recessivePersonalities.Add(Personality.Timid);
+                    dominantPersonalities.RemoveAt(Random.Range(0, dominantPersonalities.Count));
                 }
+            }
+        }
+
+        // recessivePersonalities에 중복이 있으면 둘 다 제거하고 dominantPersonalities에 추가한다
+        recessivePersonalities.Sort();
+        for (int i = 0; i < recessivePersonalities.Count - 1; i++)
+        {
+            if (recessivePersonalities[i] == recessivePersonalities[i + 1])
+            {
+                if (!dominantPersonalities.Contains(recessivePersonalities[i]))
+                {
+                    dominantPersonalities.Add(recessivePersonalities[i]);
+                }
+                recessivePersonalities.RemoveAt(i);
+                recessivePersonalities.RemoveAt(i);
+                i--;
+            }
+        }
+
+        // 대응되는 성격이 있으면 둘 중 하나를 recessivePersonalities로 옮긴다
+        if (dominantPersonalities.Contains(Personality.Timid) && dominantPersonalities.Contains(Personality.Aggressive))
+        {
+            if (Random.value > 0.5f)
+            {
+                dominantPersonalities.Remove(Personality.Aggressive);
+                recessivePersonalities.Add(Personality.Aggressive);
+            }
+            else
+            {
+                dominantPersonalities.Remove(Personality.Timid);
+                recessivePersonalities.Add(Personality.Timid);
             }
         }
 
         if (dominantPersonalities.Contains(Personality.Lazy) && dominantPersonalities.Contains(Personality.Active))
         {
-            //둘 중 하나를 무작위로 선택
-            if (Random.value < 0.5f)
+            if (Random.value > 0.5f)
             {
                 dominantPersonalities.Remove(Personality.Active);
-                if (!recessivePersonalities.Contains(Personality.Active))
-                {
-                    recessivePersonalities.Add(Personality.Active);
-                }
+                recessivePersonalities.Add(Personality.Active);
             }
             else
             {
                 dominantPersonalities.Remove(Personality.Lazy);
-                if (!recessivePersonalities.Contains(Personality.Lazy))
-                {
-                    recessivePersonalities.Add(Personality.Lazy);
-                }
+                recessivePersonalities.Add(Personality.Lazy);
             }
         }
 
         if (dominantPersonalities.Contains(Personality.Dependent) && dominantPersonalities.Contains(Personality.Independent))
         {
-            //둘 중 하나를 무작위로 선택
-            if (Random.value < 0.5f)
+            if (Random.value > 0.5f)
             {
                 dominantPersonalities.Remove(Personality.Independent);
-                if (!recessivePersonalities.Contains(Personality.Independent))
-                {
-                    recessivePersonalities.Add(Personality.Independent);
-                }
+                recessivePersonalities.Add(Personality.Independent);
             }
             else
             {
                 dominantPersonalities.Remove(Personality.Dependent);
-                if (!recessivePersonalities.Contains(Personality.Dependent))
-                {
-                    recessivePersonalities.Add(Personality.Dependent);
-                }
-            }
-        }
-
-        // 확률적으로 돌연변이를 일으켜 무작위 성격을 지우거나 가지고 있지 않은 성격을 추가
-        if (Random.value < 0.005f)
-        {
-            int ran = Random.Range(0, dominantPersonalities.Count);
-            recessivePersonalities.Add(dominantPersonalities[ran]);
-            dominantPersonalities.RemoveAt(ran);
-        }
-        else if (Random.value < 0.005f)
-        {
-            while (true)
-            {
-                int ran = Random.Range(0, Personality.GetValues(typeof(Personality)).Length);
-                Personality personality = (Personality)Personality.GetValues(typeof(Personality)).GetValue(ran);
-                if (!dominantPersonalities.Contains(personality))
-                {
-                    if (recessivePersonalities.Contains(personality))
-                    {
-                        recessivePersonalities.Remove(personality);
-                    }
-                    dominantPersonalities.Add(personality);
-
-                    break;
-                }
+                recessivePersonalities.Add(Personality.Dependent);
             }
         }
     }

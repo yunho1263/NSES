@@ -42,6 +42,11 @@ public class DNA
 {
     List<Gene> genes = new List<Gene>();
 
+    public DNA()
+    {
+
+    }
+
     public DNA(DNA dna1, DNA dna2)
     {
 

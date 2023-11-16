@@ -8,6 +8,7 @@ public class FindPartner : NavigationNode
     public LayerMask layerMask;
 
     public Mating mating;
+    public Mating partnerMating;
 
     public AnimalStat stat => behaviour.stat;
 
@@ -79,7 +80,7 @@ public class FindPartner : NavigationNode
                 {
                     removeAnimals.Add(transform);
                 }
-                else if (!animalStat.CanBreeding)
+                else if (!animalStat.canBreed)
                 {
                     removeAnimals.Add(transform);
                 }
@@ -98,6 +99,8 @@ public class FindPartner : NavigationNode
         });
 
         AiPath.destination = animals[0].position;
+        animals[0].TryGetComponent(out AnimalBehaviour aniBe);
+        partnerMating = aniBe.mating;
 
         if (IsArrival)
         {
