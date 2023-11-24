@@ -14,6 +14,7 @@ public class MatingMale : Mating
 
     protected override void OnStart()
     {
+        ((MatingFemale)findPartnerNode.mating).maleList.Enqueue(this);
     }
 
     protected override void OnStop()

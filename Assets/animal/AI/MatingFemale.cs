@@ -11,26 +11,6 @@ public class MatingFemale : Mating
 
     public Queue<MatingMale> maleList = new();
 
-    public bool Accept(MatingMale male)
-    {
-        if (male == null)
-        {
-            return false;
-        }
-
-        if (behaviour.stat.canBreed)
-        {
-            behaviour.partner = male.behaviour;
-        }
-
-        return behaviour.partner != null;
-    }
-
-    public void Childbirth()
-    {
-        
-    }
-
     public override void Breed()
     {
         startTime = Time.time;
@@ -38,7 +18,7 @@ public class MatingFemale : Mating
         AnimalBehaviour chB;
         GameObject child = Object.Instantiate(behaviour.stat.babyPrefab, behaviour.transform.position, Quaternion.identity);
         child.TryGetComponent(out chB);
-        chB.stat.dna = dna; 
+        chB.stat.dna = dna;
         chB.Initialize();
         behaviour.stat.canBreed = false;
     }

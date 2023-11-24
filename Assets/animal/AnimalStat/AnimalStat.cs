@@ -36,7 +36,7 @@ public class AnimalStat : MonoBehaviour
     #region ±‚∫ª Ω∫≈»
     public AnimalType animalType;
     public List<Personality> personalitys;
-    
+
     public float maxHealth;
     public float health;
 

@@ -39,7 +39,7 @@ public abstract class AnimalBehaviour : MonoBehaviour
     {
         if (stat.dna == null)
         {
-            stat.dna = new DNA();
+            stat.dna = new DNA(stat);
             Initialize();
         }
     }

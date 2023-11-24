@@ -132,4 +132,9 @@ public class Gene
             }
         }
     }
+
+    public Gene(GeneticTraits i)
+    {
+        geneticTraits = i;
+    }
 }

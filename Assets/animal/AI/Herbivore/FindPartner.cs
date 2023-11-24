@@ -76,7 +76,7 @@ public class FindPartner : NavigationNode
 
             if (animalStat)
             {
-                if (stat.sex == stat.sex)
+                if (stat.sex == animalStat.sex)
                 {
                     removeAnimals.Add(transform);
                 }
@@ -90,6 +90,11 @@ public class FindPartner : NavigationNode
         foreach (Transform transform in removeAnimals)
         {
             animals.Remove(transform);
+        }
+
+        if (animals.Count == 0)
+        {
+            return SearchResult.None;
         }
 
         //거리순으로 정렬

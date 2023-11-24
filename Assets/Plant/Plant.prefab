@@ -150,7 +150,7 @@ MonoBehaviour:
   time: 0
   growRadius: 2
   remaining: 1
-  maxPlantCount: 5
+  maxPlantCount: 1
   plantPrefab: {fileID: 7033911976221364062}
 --- !u!58 &803805141593531588
 CircleCollider2D:

@@ -5,14 +5,16 @@ using UnityEngine;
 public class PersonalityGene : Gene
 {
     public new GeneticTraits geneticTraits = GeneticTraits.Personality;
-    public List<Personality> recessivePersonalities;
-    public List<Personality> dominantPersonalities;
+    public List<Personality> recessivePersonalities = new List<Personality>();
+    public List<Personality> dominantPersonalities = new List<Personality>();
+
+    public PersonalityGene(GeneticTraits i) : base(i)
+    {
+        this.geneticTraits = i;
+    }
 
     public PersonalityGene(PersonalityGene gene1, PersonalityGene gene2): base(GeneticTraits.Personality, gene1, gene2)
     {
-        dominantPersonalities = new List<Personality>();
-        recessivePersonalities = new List<Personality>();
-
         // recessivePersonalities를 모두 가져온다
         recessivePersonalities.AddRange(gene1.recessivePersonalities);
         recessivePersonalities.AddRange(gene2.recessivePersonalities);

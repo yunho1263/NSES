@@ -17,7 +17,7 @@ public class Plant : MonoBehaviour
     public float growRadius;
 
     public int remaining;
-    public float FullnessPerServing => transform.localScale.x * 10;
+    public float FullnessPerServing => transform.localScale.x * 30;
 
     public int maxPlantCount;
     public GameObject plantPrefab;
